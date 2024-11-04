@@ -79,8 +79,9 @@ export const createQuestion = async (req, res) => {
         explicacao
     } = req.body;
 
+    // Verifica se os campos obrigatórios estão preenchidos
     if (!pergunta || !disciplina || !assunto || !alternativas || !respostaCorreta) {
-        return res.status(400).json({ error: 'Todos os campos obrigatórios devem ser preenchidos.' });
+        return res.status(400).json({ error: 'Os campos "Pergunta", "Disciplina", "Assunto", "Alternativas" e "Resposta Correta" devem ser preenchidos.' });
     }
 
     try {
@@ -90,8 +91,17 @@ export const createQuestion = async (req, res) => {
                 texto_aux, alternativas, resposta_correta, explicacao
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
             [
-                banca, instituicao, prova, nivel, disciplina, assunto, pergunta, 
-                textoAux, JSON.stringify(alternativas), respostaCorreta, explicacao
+                banca || null,
+                instituicao || null,
+                prova || null,
+                nivel || null,
+                disciplina,
+                assunto,
+                pergunta,
+                textoAux || null, 
+                JSON.stringify(alternativas),
+                respostaCorreta,
+                explicacao || null 
             ]
         );
 
@@ -102,6 +112,7 @@ export const createQuestion = async (req, res) => {
         res.status(500).json({ error: 'Erro ao salvar a questão no banco de dados.' });
     }
 };
+
 
 export const getQuestions = async (req, res) => {
     try {
@@ -116,16 +127,14 @@ export const getQuestions = async (req, res) => {
 export const saveSimulado = async (req, res) => {
     const { fullName, examName, questions } = req.body;
 
-    // Check for required fields
     if (!fullName || !examName || !questions || questions.length === 0) {
         return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
     }
 
     try {
-        // Use the array directly for PostgreSQL
         const result = await query(
             'INSERT INTO simulados (full_name, exam_name, questions, created_at) VALUES ($1, $2, $3, $4) RETURNING id',
-            [fullName, examName, questions, new Date()]  // Use questions as is
+            [fullName, examName, questions, new Date()]  
         );
 
         const simuladoId = result.rows[0].id;
