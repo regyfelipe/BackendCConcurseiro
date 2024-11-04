@@ -197,30 +197,38 @@ export const saveAnswers = async (req, res) => {
     }
 
     try {
+        await query('BEGIN');
+
         const result = await query(
             'INSERT INTO answers (simulado_id, name, created_at) VALUES ($1, $2, $3) RETURNING id',
             [simuladoID, name, new Date()]
         );
-
         const answerId = result.rows[0].id; 
 
         const promises = questao.map(async (item) => {
-            const { question_id, resultado } = item;
+            if (!item.question_id || !item.resultado || !item.resultado.given_answer || !item.resultado.correct_answer) {
+                throw new Error("Estrutura de questão inválida");
+            }
 
             await query(
                 'INSERT INTO question_answers (answer_id, question_id, given_answer, correct_answer) VALUES ($1, $2, $3, $4)',
-                [answerId, question_id, resultado.given_answer, resultado.correct_answer]
+                [answerId, item.question_id, item.resultado.given_answer, item.resultado.correct_answer]
             );
         });
 
-        await Promise.all(promises); 
+        await Promise.all(promises);
+
+        await query('COMMIT');
 
         res.status(201).json({
             message: "Respostas salvas com sucesso!",
             answerId 
         });
+
     } catch (error) {
+        await query('ROLLBACK');
         console.error('Erro ao salvar respostas:', error.message);
         res.status(500).json({ error: "Erro ao salvar respostas.", details: error.message });
     }
 };
+
