@@ -1,8 +1,7 @@
 import { query } from '../config/db.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// Registrar novo usuário
 export const registerUser = async (req, res) => {
     const { email, password, name } = req.body;
 
@@ -26,7 +25,6 @@ export const registerUser = async (req, res) => {
     }
 };
 
-// Consultar todos os usuários
 export const getUsers = async (req, res) => {
     try {
         const result = await query('SELECT id, email, name FROM users'); 
@@ -37,7 +35,6 @@ export const getUsers = async (req, res) => {
     }
 };
 
-// Login de usuário
 export const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
@@ -67,7 +64,6 @@ export const loginUser = async (req, res) => {
     }
 };
 
-// Criar nova questão
 export const createQuestion = async (req, res) => {
     const {
         banca,
@@ -107,7 +103,6 @@ export const createQuestion = async (req, res) => {
     }
 };
 
-// Obter todas as questões
 export const getQuestions = async (req, res) => {
     try {
         const result = await query(`SELECT * FROM questions`);
@@ -118,11 +113,9 @@ export const getQuestions = async (req, res) => {
     }
 };
 
-// Salvar simulado
 export const saveSimulado = async (req, res) => {
     const { fullName, examName, questions } = req.body;
 
-    // Validate the input
     if (!fullName || !examName || !questions || questions.length === 0) {
         return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
     }
@@ -145,7 +138,6 @@ export const saveSimulado = async (req, res) => {
     }
 };
 
-// Endpoint para obter questão por ID
 export const getQuestionById = async (req, res) => {
     const { id } = req.params;
 
@@ -163,7 +155,6 @@ export const getQuestionById = async (req, res) => {
     }
 };
 
-// Obter simulado por ID
 export const getSimuladoById = async (req, res) => {
     const { id } = req.params;
 
