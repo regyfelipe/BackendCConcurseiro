@@ -79,13 +79,6 @@ export const createQuestion = async (req, res) => {
         explicacao
     } = req.body;
 
-    // Verifica se os campos obrigatórios estão preenchidos
-    if (!pergunta || !disciplina || !assunto || !Array.isArray(alternativas) || alternativas.length === 0 || !respostaCorreta) {
-        return res.status(400).json({
-            error: 'Os campos "Pergunta", "Disciplina", "Assunto", "Alternativas" e "Resposta Correta" devem ser preenchidos.'
-        });
-    }
-
     try {
         const result = await query(
             `INSERT INTO questions (
@@ -97,12 +90,12 @@ export const createQuestion = async (req, res) => {
                 instituicao || null, // Envia null se instituicao não estiver preenchido
                 prova || null, // Envia null se prova não estiver preenchido
                 nivel || null, // Envia null se nivel não estiver preenchido
-                disciplina, // Este campo é obrigatório
-                assunto, // Este campo é obrigatório
-                pergunta, // Este campo é obrigatório
+                disciplina || null, // Envia null se disciplina não estiver preenchido
+                assunto || null, // Envia null se assunto não estiver preenchido
+                pergunta || null, // Envia null se pergunta não estiver preenchido
                 textoAux || null, // Envia null se textoAux não estiver preenchido
-                JSON.stringify(alternativas), // Envia as alternativas como string JSON
-                respostaCorreta, // Este campo é obrigatório
+                alternativas ? JSON.stringify(alternativas) : null, // Envia as alternativas como string JSON ou null se não houver
+                respostaCorreta || null, // Envia null se respostaCorreta não estiver preenchido
                 explicacao || null // Envia null se explicacao não estiver preenchido
             ]
         );
@@ -114,7 +107,6 @@ export const createQuestion = async (req, res) => {
         res.status(500).json({ error: 'Erro ao salvar a questão no banco de dados.' });
     }
 };
-
 
 export const getQuestions = async (req, res) => {
     try {
