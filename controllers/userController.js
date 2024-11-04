@@ -190,29 +190,34 @@ export const getSimuladoById = async (req, res) => {
 
 
 export const saveAnswers = async (req, res) => {
-    const { name, responses } = req.body; 
+    const { simuladoID, name, questao } = req.body;
 
-    if (!name || !Array.isArray(responses)) {
-        return res.status(400).json({ error: 'Nome e respostas são obrigatórios e devem estar no formato correto.' });
+    if (!simuladoID || !name || !Array.isArray(questao)) {
+        return res.status(400).json({ error: 'Simulado ID, nome e questões são obrigatórios.' });
     }
 
     try {
-        const promises = responses.map(async (response) => {
-            const { questionId, givenAnswer, correctAnswer } = response;
+        const result = await query(
+            'INSERT INTO answers (simulado_id, name, created_at) VALUES ($1, $2, $3) RETURNING id',
+            [simuladoID, name, new Date()]
+        );
 
-            const result = await query(
-                'INSERT INTO answers (name, question_id, given_answer, correct_answer, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-                [name, questionId, givenAnswer, correctAnswer, new Date()]
+        const answerId = result.rows[0].id; 
+
+        const promises = questao.map(async (item) => {
+            const { question_id, resultado } = item;
+
+            await query(
+                'INSERT INTO question_answers (answer_id, question_id, given_answer, correct_answer) VALUES ($1, $2, $3, $4)',
+                [answerId, question_id, resultado.given_answer, resultado.correct_answer]
             );
-
-            return result.rows[0].id; 
         });
 
-        const answerIds = await Promise.all(promises);
+        await Promise.all(promises); 
 
         res.status(201).json({
             message: "Respostas salvas com sucesso!",
-            answerIds 
+            answerId 
         });
     } catch (error) {
         console.error('Erro ao salvar respostas:', error.message);
