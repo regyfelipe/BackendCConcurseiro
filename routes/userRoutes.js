@@ -31,4 +31,6 @@ router.get('/simulado/:id', getSimuladoById);
 
 router.get('/simulados', getSimulados)
 
+router.get('/answers', saveAnswers)
+
 export default router;

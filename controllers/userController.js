@@ -187,3 +187,29 @@ export const getSimuladoById = async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar simulado.' });
     }
 };
+
+
+export const saveAnswers = async (req, res) => {
+    const { name, answers } = req.body;
+
+    if (!name || !answers) {
+        return res.status(400).json({ error: 'Nome e respostas são obrigatórios.' });
+    }
+
+    try {
+        const result = await query(
+            'INSERT INTO answers (name, answers, created_at) VALUES ($1, $2, $3) RETURNING id',
+            [name, answers, new Date()]
+        );
+
+        const answerId = result.rows[0].id;
+
+        res.status(201).json({
+            message: "Respostas salvas com sucesso!",
+            answerId
+        });
+    } catch (error) {
+        console.error('Erro ao salvar respostas:', error.message);
+        res.status(500).json({ error: "Erro ao salvar respostas.", details: error.message });
+    }
+};
