@@ -229,6 +229,8 @@ export const getSimuladoResult = async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar o resultado do simulado.' });
     }
 };
+
+
 export const getSimuladoClassificacao = async (req, res) => {
     const { id } = req.params; // Extrai o id do simulado da requisição
 
@@ -248,18 +250,27 @@ export const getSimuladoClassificacao = async (req, res) => {
                 a.name
             ORDER BY 
                 totalAcertos DESC
-        `, [id]); 
+        `, [id]);
 
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Classificação não encontrada.' });
         }
 
-        res.status(200).json(result.rows);
+        // Adiciona a posição
+        const finalResults = result.rows.map((row, index) => ({
+            posicao: index + 1,
+            nome: row.nome,
+            totalAcertos: row.totalacertos,
+            totalErros: row.totalerros,
+        }));
+
+        res.status(200).json(finalResults);
     } catch (error) {
         console.error('Erro ao buscar classificação do simulado:', error);
         res.status(500).json({ error: 'Erro ao buscar classificação do simulado.' });
     }
 };
+
 
 export const saveAnswers = async (req, res) => {
     const { simuladoID, name, questao } = req.body;
