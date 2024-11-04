@@ -229,22 +229,26 @@ export const getSimuladoResult = async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar o resultado do simulado.' });
     }
 };
-
 export const getSimuladoClassificacao = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params; // Extrai o id do simulado da requisição
 
     try {
         const result = await query(`
-            SELECT
-                name AS nome,
-                COUNT(CASE WHEN given_answer = correct_answer THEN 1 END) AS totalAcertos,
-                COUNT(CASE WHEN given_answer != correct_answer THEN 1 END) AS totalErros
-            FROM answers
-            JOIN question_answers ON answers.id = question_answers.answer_id
-            WHERE answers.simulado_id = $1
-            GROUP BY name
-            ORDER BY totalAcertos DESC
-        `, [id]);
+            SELECT 
+                a.name AS nome,
+                COUNT(CASE WHEN qa.given_answer = qa.correct_answer THEN 1 END) AS totalAcertos,
+                COUNT(CASE WHEN qa.given_answer != qa.correct_answer THEN 1 END) AS totalErros
+            FROM 
+                answers a
+            JOIN 
+                question_answers qa ON a.id = qa.answer_id
+            WHERE 
+                a.simulado_id = $1
+            GROUP BY 
+                a.name
+            ORDER BY 
+                totalAcertos DESC
+        `, [id]); 
 
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Classificação não encontrada.' });
