@@ -86,17 +86,17 @@ export const createQuestion = async (req, res) => {
                 texto_aux, alternativas, resposta_correta, explicacao
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
             [
-                banca || null, // Envia null se banca não estiver preenchido
-                instituicao || null, // Envia null se instituicao não estiver preenchido
-                prova || null, // Envia null se prova não estiver preenchido
-                nivel || null, // Envia null se nivel não estiver preenchido
-                disciplina || null, // Envia null se disciplina não estiver preenchido
-                assunto || null, // Envia null se assunto não estiver preenchido
-                pergunta || null, // Envia null se pergunta não estiver preenchido
-                textoAux || null, // Envia null se textoAux não estiver preenchido
-                alternativas ? JSON.stringify(alternativas) : null, // Envia as alternativas como string JSON ou null se não houver
-                respostaCorreta || null, // Envia null se respostaCorreta não estiver preenchido
-                explicacao || null // Envia null se explicacao não estiver preenchido
+                banca || null, 
+                instituicao || null, 
+                prova || null, 
+                nivel || null, 
+                disciplina || null,
+                assunto || null, 
+                pergunta || null,
+                textoAux || null,
+                alternativas ? JSON.stringify(alternativas) : null, 
+                respostaCorreta || null,
+                explicacao || null 
             ]
         );
 
