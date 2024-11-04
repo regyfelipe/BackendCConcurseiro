@@ -9,7 +9,9 @@ import {
     saveSimulado, 
     getSimuladoById,
     getSimulados,
-    saveAnswers
+    saveAnswers,
+    getSimuladoResult
+
 } from '../controllers/userController.js';
 
 const router = express.Router();
@@ -31,6 +33,9 @@ router.get('/questions/:id', getQuestionById);
 router.get('/simulado/:id', getSimuladoById); 
 
 router.get('/simulados', getSimulados)
+
+router.get('/resultadoSimulado/:id', getSimuladoResult);
+
 
 router.post('/saveAnswers', saveAnswers);
 

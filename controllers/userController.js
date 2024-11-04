@@ -188,6 +188,48 @@ export const getSimuladoById = async (req, res) => {
     }
 };
 
+export const getSimuladoResult = async (req, res) => {
+    const { id } = req.params; 
+
+    try {
+        const simuladoResult = await query(
+            `SELECT s.id AS simulado_id, s.exam_name, q.pergunta, q.resposta_correta, qa.given_answer
+            FROM simulados AS s
+            JOIN question_answers AS qa ON qa.simulado_id = s.id
+            JOIN questions AS q ON q.id = qa.question_id
+            WHERE s.id = $1`,
+            [id]
+        );
+
+        if (simuladoResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Resultado do simulado não encontrado.' });
+        }
+
+        const results = simuladoResult.rows.map((row) => ({
+            pergunta: row.pergunta,
+            respostaCorreta: row.resposta_correta,
+            respostaDada: row.given_answer,
+            acertou: row.resposta_correta === row.given_answer,
+        }));
+
+        const totalQuestions = results.length;
+        const correctAnswers = results.filter(r => r.acertou).length;
+        const score = (correctAnswers / totalQuestions) * 100;
+
+        res.status(200).json({
+            simuladoId: id,
+            examName: simuladoResult.rows[0].exam_name,
+            results,
+            score: `${score}%`,
+            correctAnswers,
+            totalQuestions,
+        });
+    } catch (error) {
+        console.error('Erro ao buscar o resultado do simulado:', error);
+        res.status(500).json({ error: 'Erro ao buscar o resultado do simulado.' });
+    }
+};
+
 
 export const saveAnswers = async (req, res) => {
     const { simuladoID, name, questao } = req.body;
