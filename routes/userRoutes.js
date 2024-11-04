@@ -10,7 +10,8 @@ import {
     getSimuladoById,
     getSimulados,
     saveAnswers,
-    getSimuladoResult
+    getSimuladoResult,
+    getSimuladoClassificacao
 
 } from '../controllers/userController.js';
 
@@ -36,6 +37,7 @@ router.get('/simulados', getSimulados)
 
 router.get('/resultadoSimulado/:id', getSimuladoResult);
 
+router.get('/simulados/:id/classificacao', getSimuladoClassificacao);
 
 router.post('/saveAnswers', saveAnswers);
 

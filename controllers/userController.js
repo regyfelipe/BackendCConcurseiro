@@ -230,6 +230,32 @@ export const getSimuladoResult = async (req, res) => {
     }
 };
 
+export const getSimuladoClassificacao = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const result = await query(`
+            SELECT
+                name AS nome,
+                COUNT(CASE WHEN given_answer = correct_answer THEN 1 END) AS totalAcertos,
+                COUNT(CASE WHEN given_answer != correct_answer THEN 1 END) AS totalErros
+            FROM answers
+            JOIN question_answers ON answers.id = question_answers.answer_id
+            WHERE answers.simulado_id = $1
+            GROUP BY name
+            ORDER BY totalAcertos DESC
+        `, [id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Classificação não encontrada.' });
+        }
+
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Erro ao buscar classificação do simulado:', error);
+        res.status(500).json({ error: 'Erro ao buscar classificação do simulado.' });
+    }
+};
 
 export const saveAnswers = async (req, res) => {
     const { simuladoID, name, questao } = req.body;
