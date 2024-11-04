@@ -79,10 +79,6 @@ export const createQuestion = async (req, res) => {
         explicacao
     } = req.body;
 
-    if (!pergunta || !disciplina || !assunto || !alternativas || !respostaCorreta) {
-        return res.status(400).json({ error: 'Todos os campos obrigatórios devem ser preenchidos.' });
-    }
-
     try {
         const result = await query(
             `INSERT INTO questions (
@@ -90,8 +86,17 @@ export const createQuestion = async (req, res) => {
                 texto_aux, alternativas, resposta_correta, explicacao
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
             [
-                banca, instituicao, prova, nivel, disciplina, assunto, pergunta, 
-                textoAux, JSON.stringify(alternativas), respostaCorreta, explicacao
+                banca || null, 
+                instituicao || null, 
+                prova || null, 
+                nivel || null, 
+                disciplina || null,
+                assunto || null, 
+                pergunta || null,
+                textoAux || null,
+                alternativas ? JSON.stringify(alternativas) : null, 
+                respostaCorreta || null,
+                explicacao || null 
             ]
         );
 
@@ -113,6 +118,16 @@ export const getQuestions = async (req, res) => {
     }
 };
 
+export const getSimulados = async (req, res) => {
+    try {
+        const result = await query(`SELECT * FROM simulados`);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error("Erro ao buscar questões:", error);
+        res.status(500).json({ error: "Erro ao buscar questões." });
+    }
+};
+
 export const saveSimulado = async (req, res) => {
     const { fullName, examName, questions } = req.body;
 
@@ -123,20 +138,21 @@ export const saveSimulado = async (req, res) => {
     try {
         const result = await query(
             'INSERT INTO simulados (full_name, exam_name, questions, created_at) VALUES ($1, $2, $3, $4) RETURNING id',
-            [fullName, examName, JSON.stringify(questions), new Date()] // Passar questions como string JSON
+            [fullName, examName, questions, new Date()]  
         );
 
         const simuladoId = result.rows[0].id;
 
         res.status(201).json({
             message: "Simulado salvo com sucesso!",
-            link: `http://backendcconcurseiro-production.up.railway.app/simulado/${simuladoId}`
+            link: `https://cconcurseiro.up.railway.app/simulado/${simuladoId}`
         });
     } catch (error) {
         console.error('Erro ao salvar o simulado:', error.message);
         res.status(500).json({ error: "Erro ao salvar o simulado.", details: error.message });
     }
 };
+
 
 export const getQuestionById = async (req, res) => {
     const { id } = req.params;
@@ -171,4 +187,3 @@ export const getSimuladoById = async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar simulado.' });
     }
 };
-
