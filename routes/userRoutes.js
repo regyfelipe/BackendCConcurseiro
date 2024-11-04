@@ -29,6 +29,6 @@ router.get('/questions/:id', getQuestionById);
 
 router.get('/simulado/:id', getSimuladoById); 
 
-router.get('./simulados', getSimulados)
+router.get('/simulados', getSimulados)
 
 export default router;
