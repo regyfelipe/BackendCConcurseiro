@@ -8,7 +8,8 @@ import {
     getQuestions, 
     saveSimulado, 
     getSimuladoById,
-    getSimulados
+    getSimulados,
+    saveAnswers
 } from '../controllers/userController.js';
 
 const router = express.Router();
