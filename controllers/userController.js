@@ -80,8 +80,10 @@ export const createQuestion = async (req, res) => {
     } = req.body;
 
     // Verifica se os campos obrigatórios estão preenchidos
-    if (!pergunta || !disciplina || !assunto || !alternativas || !respostaCorreta) {
-        return res.status(400).json({ error: 'Os campos "Pergunta", "Disciplina", "Assunto", "Alternativas" e "Resposta Correta" devem ser preenchidos.' });
+    if (!pergunta || !disciplina || !assunto || !Array.isArray(alternativas) || alternativas.length === 0 || !respostaCorreta) {
+        return res.status(400).json({
+            error: 'Os campos "Pergunta", "Disciplina", "Assunto", "Alternativas" e "Resposta Correta" devem ser preenchidos.'
+        });
     }
 
     try {
@@ -91,17 +93,17 @@ export const createQuestion = async (req, res) => {
                 texto_aux, alternativas, resposta_correta, explicacao
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
             [
-                banca || null,
-                instituicao || null,
-                prova || null,
-                nivel || null,
-                disciplina,
-                assunto,
-                pergunta,
-                textoAux || null, 
-                JSON.stringify(alternativas),
-                respostaCorreta,
-                explicacao || null 
+                banca || null, // Envia null se banca não estiver preenchido
+                instituicao || null, // Envia null se instituicao não estiver preenchido
+                prova || null, // Envia null se prova não estiver preenchido
+                nivel || null, // Envia null se nivel não estiver preenchido
+                disciplina, // Este campo é obrigatório
+                assunto, // Este campo é obrigatório
+                pergunta, // Este campo é obrigatório
+                textoAux || null, // Envia null se textoAux não estiver preenchido
+                JSON.stringify(alternativas), // Envia as alternativas como string JSON
+                respostaCorreta, // Este campo é obrigatório
+                explicacao || null // Envia null se explicacao não estiver preenchido
             ]
         );
 
