@@ -123,14 +123,14 @@ export const saveSimulado = async (req, res) => {
     try {
         const result = await query(
             'INSERT INTO simulados (full_name, exam_name, questions, created_at) VALUES ($1, $2, $3, $4) RETURNING id',
-            [fullName, examName, JSON.stringify(questions), new Date()] // Passar questions como string JSON
+            [fullName, examName, JSON.stringify(questions), new Date()] 
         );
 
         const simuladoId = result.rows[0].id;
 
         res.status(201).json({
             message: "Simulado salvo com sucesso!",
-            link: `https://backendcconcurseiro-production.up.railway.app/simulado/${simuladoId}`
+            link: `https://cconcurseiro.up.railway.app/simulado/${simuladoId}`
         });
     } catch (error) {
         console.error('Erro ao salvar o simulado:', error.message);
