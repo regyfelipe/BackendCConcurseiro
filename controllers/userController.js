@@ -116,14 +116,16 @@ export const getQuestions = async (req, res) => {
 export const saveSimulado = async (req, res) => {
     const { fullName, examName, questions } = req.body;
 
+    // Check for required fields
     if (!fullName || !examName || !questions || questions.length === 0) {
         return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
     }
 
     try {
+        // Use the array directly for PostgreSQL
         const result = await query(
             'INSERT INTO simulados (full_name, exam_name, questions, created_at) VALUES ($1, $2, $3, $4) RETURNING id',
-            [fullName, examName, JSON.stringify(questions), new Date()] 
+            [fullName, examName, questions, new Date()]  // Use questions as is
         );
 
         const simuladoId = result.rows[0].id;
@@ -137,6 +139,7 @@ export const saveSimulado = async (req, res) => {
         res.status(500).json({ error: "Erro ao salvar o simulado.", details: error.message });
     }
 };
+
 
 export const getQuestionById = async (req, res) => {
     const { id } = req.params;
