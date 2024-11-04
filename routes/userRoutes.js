@@ -7,7 +7,8 @@ import {
     createQuestion, 
     getQuestions, 
     saveSimulado, 
-    getSimuladoById
+    getSimuladoById,
+    getSimulados
 } from '../controllers/userController.js';
 
 const router = express.Router();
@@ -27,5 +28,7 @@ router.post('/simulado', saveSimulado);
 router.get('/questions/:id', getQuestionById);
 
 router.get('/simulado/:id', getSimuladoById); 
+
+router.get('./simulados', getSimulados)
 
 export default router;
