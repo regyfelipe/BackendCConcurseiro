@@ -308,7 +308,6 @@ export const saveAnswers = async (req, res) => {
     }
 };
 
-
 export const getFilterOptions = async (req, res) => {
     try {
         const disciplinaResult = await query('SELECT DISTINCT disciplina FROM questions');
