@@ -145,7 +145,7 @@ export const saveSimulado = async (req, res) => {
 
         res.status(201).json({
             message: "Simulado salvo com sucesso!",
-            link: `https://cconcurseiro.up.railway.app/simulado/${simuladoId}`
+            link: `https://c-concurseiro.vercel.app//simulado/${simuladoId}`
         });
     } catch (error) {
         console.error('Erro ao salvar o simulado:', error.message);
@@ -232,7 +232,7 @@ export const getSimuladoResult = async (req, res) => {
 
 
 export const getSimuladoClassificacao = async (req, res) => {
-    const { id } = req.params; // Extrai o id do simulado da requisição
+    const { id } = req.params; 
 
     try {
         const result = await query(`
