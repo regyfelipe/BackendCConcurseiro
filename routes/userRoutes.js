@@ -11,7 +11,8 @@ import {
     getSimulados,
     saveAnswers,
     getSimuladoResult,
-    getSimuladoClassificacao
+    getSimuladoClassificacao,
+    getFilterOptions
 
 } from '../controllers/userController.js';
 
@@ -40,5 +41,8 @@ router.get('/resultadoSimulado/:id', getSimuladoResult);
 router.get('/simulados/:id/classificacao', getSimuladoClassificacao);
 
 router.post('/saveAnswers', saveAnswers);
+
+router.post('/options', getFilterOptions);
+
 
 export default router;
