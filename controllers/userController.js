@@ -307,3 +307,27 @@ export const saveAnswers = async (req, res) => {
         res.status(500).json({ error: "Erro ao salvar respostas.", details: error.message });
     }
 };
+
+
+export const getFilterOptions = async (req, res) => {
+    try {
+        const disciplinaResult = await query('SELECT DISTINCT disciplina FROM questions');
+        const assuntoResult = await query('SELECT DISTINCT assunto FROM questions');
+        const bancaResult = await query('SELECT DISTINCT banca FROM questions');
+        const nivelResult = await query('SELECT DISTINCT nivel FROM questions');
+        const instituicaoResult = await query('SELECT DISTINCT instituicao FROM questions');
+
+        const options = {
+            disciplina: disciplinaResult.rows.map(item => ({ label: item.disciplina, value: item.disciplina })),
+            assunto: assuntoResult.rows.map(item => ({ label: item.assunto, value: item.assunto })),
+            banca: bancaResult.rows.map(item => ({ label: item.banca, value: item.banca })),
+            nivel: nivelResult.rows.map(item => ({ label: item.nivel, value: item.nivel })),
+            instituicao: instituicaoResult.rows.map(item => ({ label: item.instituicao, value: item.instituicao })),
+        };
+
+        res.status(200).json(options);
+    } catch (error) {
+        console.error('Erro ao buscar opções de filtro:', error);
+        res.status(500).json({ error: 'Erro ao buscar opções de filtro.' });
+    }
+};
