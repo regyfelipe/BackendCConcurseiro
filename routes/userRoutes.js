@@ -42,7 +42,7 @@ router.get('/simulados/:id/classificacao', getSimuladoClassificacao);
 
 router.post('/saveAnswers', saveAnswers);
 
-router.post('/options', getFilterOptions);
+router.get('/options', getFilterOptions);
 
 
 export default router;
