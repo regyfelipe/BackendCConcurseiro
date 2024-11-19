@@ -73,7 +73,7 @@ export const createQuestion = async (req, res) => {
         disciplina,
         assunto,
         pergunta,
-        textoAux,
+        textoAux, // Campo que conterá a imagem em base64
         alternativas,
         respostaCorreta,
         explicacao
@@ -86,17 +86,17 @@ export const createQuestion = async (req, res) => {
                 texto_aux, alternativas, resposta_correta, explicacao
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
             [
-                banca || null, 
-                instituicao || null, 
-                prova || null, 
-                nivel || null, 
+                banca || null,
+                instituicao || null,
+                prova || null,
+                nivel || null,
                 disciplina || null,
-                assunto || null, 
+                assunto || null,
                 pergunta || null,
-                textoAux || null,
-                alternativas ? JSON.stringify(alternativas) : null, 
+                textoAux || null, // Salva o base64 diretamente no campo texto_aux
+                alternativas ? JSON.stringify(alternativas) : null,
                 respostaCorreta || null,
-                explicacao || null 
+                explicacao || null
             ]
         );
 
@@ -107,6 +107,7 @@ export const createQuestion = async (req, res) => {
         res.status(500).json({ error: 'Erro ao salvar a questão no banco de dados.' });
     }
 };
+
 
 export const getQuestions = async (req, res) => {
     try {
