@@ -1,4 +1,4 @@
-import { query } from '../config/db.js';
+8import { query } from '../config/db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -73,7 +73,7 @@ export const createQuestion = async (req, res) => {
         disciplina,
         assunto,
         pergunta,
-        textoAux, // Campo que conterá a imagem em base64
+        textoAux,
         alternativas,
         respostaCorreta,
         explicacao
@@ -93,7 +93,7 @@ export const createQuestion = async (req, res) => {
                 disciplina || null,
                 assunto || null,
                 pergunta || null,
-                textoAux || null, // Salva o base64 diretamente no campo texto_aux
+                textoAux || null,
                 alternativas ? JSON.stringify(alternativas) : null,
                 respostaCorreta || null,
                 explicacao || null
